@@ -12,6 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
         .form-container { 
             width: 50%; 
@@ -63,26 +64,30 @@
         }
 
         .color-info #square { 
-            border: white solid; 
+            border: black solid; 
             width: 15px; 
+        }
+        .color-info p { 
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+    <h1>RGB Converter</h1>
     <section class="form-container">
         <section class="content">
-            <form onsubmit="getColors()" method="get" action="#" id="form" >
+            <form onsubmit="getColors()" method="get" id="form" >
                 <p>RGB: </p>
                 <input type="number" id="red">
                 <input type="number" id="green">
                 <input type="number" id="blue">
-                <input type="submit">
+                <input type="submit" value="Convert">
             </form>
             <section class="color-info">
                 <p id="square"></p>
-                <p class="color-text" id="rgb-value"> &nbsp; </p>
-                <p class="color-text"  id="hsl-value"> &nbsp; </p>
-                <p class="color-text"  id="hex-value"> &nbsp; </p>
+                <p class="color-text" id="rgb-value"> <b>RGB Value: </b> rgb(255, 255, 255) </p>
+                <p class="color-text"  id="hsl-value"> <b>HSL Value: </b> hsl(0, 0%, 100%) </p>
+                <p class="color-text"  id="hex-value"> <b>Hex Value: </b> #ffffff </p>
             </section>
         </section>
     </section>
@@ -114,8 +119,15 @@
                     data = JSON.parse(data)
                     hex = data.base.hex.value;
                     console.log(hex); 
+                    document.getElementById("hex-value").innerHTML = "<b>Hex Value: </b>" + hex; 
+
                     rgb = data.base.rgb.value; 
                     console.log(rgb); 
+                    document.getElementById("rgb-value").innerHTML = "<b>RGB Value: </b>" + rgb; 
+
+                    hsl = data.base.hsl.value; 
+                    console.log(hsl); 
+                    document.getElementById("hsl-value").innerHTML = "<b>HSL Value: </b>" + hsl; 
                 })
             .catch (error => console.log(error)); 
         } 
