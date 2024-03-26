@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API FUN!</title>
     <style>
         body, html { 
@@ -15,8 +12,8 @@
             flex-direction: column;
         }
         .form-container { 
-            width: 50%; 
-            height: 50%;
+            width: 70%; 
+            min-height: 50%;
             border: black solid 5px; 
             border-radius: 20px;
         }
@@ -25,13 +22,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%; 
+            max-height: 100%; 
             width: 100%; 
         }
         #form { 
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 0px; 
         }
         #form p { 
             margin-right: 20px;
@@ -50,57 +48,93 @@
         #blue { 
             color: rgb(0,0,255); 
         }
-        #form input[type="submit"] { 
+        #form input[type="button"] { 
             width: 20%; 
             margin-left: 10px;
             border-radius: 5px;
             border: solid; 
         }
-        #form input[type="submit"]:hover { 
+        #form input[type="button"]:hover { 
             cursor: pointer;
         }
         .color-info { 
             display: flex; 
+            flex-direction: column; 
+            align-items: center;
         }
-
+        .label { 
+            display: flex; 
+            font-size: 20px; 
+        }
+        .color-types { 
+            display: flex; 
+            width: 100%; 
+            justify-content: space-evenly; 
+        }
         .color-info #square { 
-            margin-left: 10px;
             border: black solid; 
-            width: 15px; 
-            height: 15px; 
+            width: 20px;
+            height: 20px;  
         }
         .color-info p { 
-            margin-right: 10px;
+           margin: 10px 15px 0px 0px;  
+        }
+        .questions { 
+            max-width: 60%; 
         }
     </style>
 </head>
 <body>
-    <h1>RGB Conversion</h1>
+    <h1>RGB Converter</h1>
     <section class="form-container">
         <section class="content">
-            <form onsubmit="getColors()" method="get" id="form" action="#">
+            <!-- HTML THAT WILL CHANGE WHEN REQUEST IS GRANTED -->
+            <form method="get" id="form" action="#">
                 <p>RGB: </p>
                 <input type="number" id="red">
                 <input type="number" id="green">
                 <input type="number" id="blue">
-                <input type="submit">
+                <input type="button" value="Convert" id="button1">
             </form>
             <section class="color-info">
-                <p id="square"></p>
-                <p class="color-text" id="rgb-value"> <b>rgb Value: </b> rgb(255, 255, 255) </p>
-                <p class="color-text"  id="hsl-value"> <b>HSL Value: </b> hsl(0, 0%, 100%) </p>
-                <p class="color-text"  id="hex-value"> <b>Hex Value: </b> #ffffff </p>
+                <div class="label">
+                    <p id="square"></p>
+                    <p class="color-text"> <b id="Name"> White </b> </p>
+                </div>
+                <div class="color-types">
+                    <p class="color-text"  id="hsl-value"> <b>HSL Value: </b> hsl(0, 0%, 100%) </p>
+                    <p class="color-text"  id="hex-value"> <b>Hex Value: </b> #FFFFFF </p>
+                    <p class="color-text"  id="hsv-value"> <b>HSV Value: </b> hsv(0, 0%, 100%) </p>
+                </div>
+            </section>
+            <!-- HTML THAT STAYS THE SAME -->
+            <section class="questions">
+                <p><b>Describe the API (and what it does):</b> The API is "thecolorapi" and it gets you information about the color you query. This information includes 
+                    the hex, rgb, and hsl version of the colors, and different color palletes based off the color you chose. </p>
+                <p><b>Cite the website and where you've found it:</b> the website for the API is "thecolorapi.com" and professor Diorio showed it to me after my first color API 
+                      was not working.</p>
+                <p><b>Describe the parameters needed for the API request:</b> There are actually a lot of different ways you can get information from thecolorapi you can give the rgb, the hsl,
+                    the hex, and many more. You can also display this information a number of differnt ways. For example, you can go "rgb=rgb(0,0,0)" or just "rgb=0,0,0". </p>
+                <p><b>Two Applications this API would be useful:</b> Two real life uses that I can think of that might use thecolorapi are a color-picker extension, as with any color, 
+                    you can get the hex, rgb, and hsl (etc) versions of the color. Secondly, for a color pallete generator, this API gives you the different versions to say the color, but it also gives different palletes
+                    in any amount of colors, based on one color chosen. You could have your user pick one color and a type of color pallete, and then you can generate one from there.</p>
             </section>
         </section>
     </section>
+    <!-- JAVASCRIPT -->
     <script>
+        window.onload = function() { 
+            button = document.getElementById("button1"); 
+            button.onclick = function() { 
+                getColors(); 
+            }
+        }
         function getColors() { 
             red = validateColor(document.getElementById("red").value); 
             green = validateColor(document.getElementById("green").value); 
             blue = validateColor(document.getElementById("blue").value); 
 
             color = red + "," + green + "," + blue; 
-            console.log(color); 
 
             colorSquare = document.getElementById("square"); 
             colorSquare.style.backgroundColor = "rgb(" + color + ")"; 
@@ -114,24 +148,25 @@
         }
 
         function fetchData(color) { 
-            res = fetch("https://cors-anywhere.herokuapp.com/https://color.serialif.com/" + color) 
+            url = "https://www.thecolorapi.com/id?rgb=" + color; 
+            res = fetch(url)
             .then (res => res.text())
             .then (data =>
                 {
-                    data = JSON.parse(data)
-                    hex = data.base.hex.value;
-                    console.log(hex); 
+                    data = JSON.parse(data);  
+                    hex = data.hex.value;
                     document.getElementById("hex-value").innerHTML = "<b>Hex Value: </b>" + hex; 
 
-                    rgb = data.base.rgb.value; 
-                    console.log(rgb); 
-                    document.getElementById("rgb-value").innerHTML = "<b>RGB Value: </b>" + rgb; 
+                    name = data.name.value; 
+                    document.getElementById("Name").innerHTML = name; 
 
-                    hsl = data.base.hsl.value; 
-                    console.log(hsl); 
+                    hsl = data.hsl.value; 
                     document.getElementById("hsl-value").innerHTML = "<b>HSL Value: </b>" + hsl; 
+
+                    hsv = data.hsv.value; 
+                    document.getElementById("hsv-value").innerHTML = "<b>HSV Value: </b>" + hsv; 
                 })
-            .catch (error => console.log(error)); 
+            .catch (error => console.log("this didn't work: " + error)); 
         } 
 </script>
 </body>
